@@ -1,7 +1,6 @@
 # Simple Bash Utils. 
-# Own implementation of cat and grep utilities
 
-### Development of Bash text utilities: cat, grep.
+### Own implementation and Development of Bash text utilities: cat, grep.
 
 | ![1_1](images/cat.jpeg) |
 | :---------------------: |
