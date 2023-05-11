@@ -1,0 +1,112 @@
+#include "polish_notation.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+
+int postfix_notation(t_token* lexeme, int count) {
+  struct stack* reverse_stack;
+  t_token* temp_lexeme = (t_token*)malloc(count * sizeof(t_token));
+  int counter_previus = 0;
+  int counter_temp = 0;
+
+  reverse_stack = init();
+  while (count) {
+    if (lexeme[counter_previus].type == NUMBER ||
+        lexeme[counter_previus].type == VARIABLE) {
+      temp_lexeme[counter_temp] = lexeme[counter_previus];
+      counter_temp++;
+    } else if (lexeme[counter_previus].type == FUNCTION) {
+      push(reverse_stack, lexeme[counter_previus]);
+    } else if (lexeme[counter_previus].type == BRACKET) {
+      if (lexeme[counter_previus].token[0] == OPEN) {
+        push(reverse_stack, lexeme[counter_previus]);
+      } else {
+        while (reverse_stack->pointer->value.token[0] != OPEN) {
+          temp_lexeme[counter_temp] = pop(reverse_stack);
+          counter_temp++;
+        }
+        pop(reverse_stack);
+        if (reverse_stack->count &&
+            reverse_stack->pointer->value.type == FUNCTION) {
+          temp_lexeme[counter_temp] = pop(reverse_stack);
+          counter_temp++;
+        }
+      }
+    } else if (lexeme[counter_previus].type == OPERATOR) {
+      while (reverse_stack->count &&
+             (reverse_stack->pointer->value.type == FUNCTION ||
+              reverse_stack->pointer->value.priority >=
+                  lexeme[counter_previus].priority)) {
+        temp_lexeme[counter_temp] = pop(reverse_stack);
+        counter_temp++;
+      }
+
+      push(reverse_stack, lexeme[counter_previus]);
+    }
+    counter_previus++;
+    count--;
+  }
+  while (reverse_stack->count) {
+    if (reverse_stack->pointer->value.token[0] != OPEN) {
+      temp_lexeme[counter_temp] = pop(reverse_stack);
+      counter_temp++;
+    } else {
+      pop(reverse_stack);
+    }
+  }
+  destroy(reverse_stack);
+  for (int i = 0; i < counter_temp; i++) {
+    *(lexeme + i) = *(temp_lexeme + i);
+  }
+  free(temp_lexeme);
+  return counter_temp;
+}
+
+void polish_notation(double* values, t_token* lexeme, int count) {
+  for (int i = 0; i < 80; i++) {
+    struct stack* operand_stack;
+    operand_stack = init();
+    for (int j = 0; j < count; j++) {
+      if (lexeme[j].type == VARIABLE) {
+        lexeme[j].value = values[i];
+        push(operand_stack, lexeme[j]);
+      } else if (lexeme[j].type == NUMBER) {
+        push(operand_stack, lexeme[j]);
+      } else if (lexeme[j].type == OPERATOR) {
+        t_token upper = pop(operand_stack);
+        t_token lower = pop(operand_stack);
+        if (lexeme[j].token[0] == PLUS) {
+          lower.value += upper.value;
+        } else if (lexeme[j].token[0] == MINUS) {
+          lower.value -= upper.value;
+        } else if (lexeme[j].token[0] == MUL) {
+          lower.value *= upper.value;
+        } else if (lexeme[j].token[0] == DIV) {
+          lower.value /= upper.value;
+        }
+        push(operand_stack, lower);
+      } else if (lexeme[j].type == FUNCTION) {
+        t_token upper = pop(operand_stack);
+        if (strcmp(lexeme[j].token, SIN) == 0) {
+          upper.value = sin(upper.value);
+        } else if (strcmp(lexeme[j].token, COS) == 0) {
+          upper.value = cos(upper.value);
+        } else if (strcmp(lexeme[j].token, TAN) == 0) {
+          upper.value = tan(upper.value);
+        } else if (strcmp(lexeme[j].token, CTG) == 0) {
+          upper.value = 1 / tan(upper.value);
+        } else if (strcmp(lexeme[j].token, LN) == 0) {
+          upper.value = log(upper.value);
+        } else if (strcmp(lexeme[j].token, SQRT) == 0) {
+          upper.value = sqrt(upper.value);
+        } else if (lexeme[j].token[0] == UNMINUS) {
+          upper.value *= -1.;
+        }
+        push(operand_stack, upper);
+      }
+    }
+    values[i] = operand_stack->pointer->value.value;
+    destroy(operand_stack);
+  }
+}
