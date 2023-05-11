@@ -2,6 +2,10 @@
 
 ### Development of Bash text utilities: cat, grep.
 
+| ![1_1](images/cat.jpeg) |
+| :---------------------: |
+
+
 ## Contents
 
 1. [Task](#task) \
