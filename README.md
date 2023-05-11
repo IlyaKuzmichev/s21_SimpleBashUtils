@@ -1,4 +1,5 @@
-# Simple Bash Utils. Own implementation of cat and grep utilities
+# Simple Bash Utils. 
+# Own implementation of cat and grep utilities
 
 ### Development of Bash text utilities: cat, grep.
 
