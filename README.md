@@ -88,7 +88,7 @@ Bonus assignment for extra points. You need to develop the grep utility:
 ## Implementation
 
   - The program was developed and implemented on MacOs Big Sur Version 11.6.6 and repeats the behavior of the cat and grep utilities on zsh 5.8 (x86_64-apple-darwin20.0) with minor modifications and my own vision of the correct implementation.
-  - You may run the tests for each utility by if you change directory to `/src/cat/testing` or `/src/grep/testing` and run the script with `sh` command for better overview.
+  - You may run the tests for each utility if you change directory to `/src/cat/testing` or `/src/grep/testing` and run the script with `sh` command for better overview.
   ```zsh
   sh mytest_s21_cat.sh
   sh mytest_s21_grep.sh
